@@ -1,13 +1,12 @@
-
 name: "Terraform"
 
 on:
   push:
     paths:
-    - 'terraform_aws/**'
-    - '.github/workflows/terraform.yml'
+      - "terraform_aws/**"
+      - ".github/workflows/terraform.yml"
     branches:
-    - main
+      - main
   workflow_dispatch:
 
 jobs:
@@ -22,31 +21,30 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
     steps:
-     - name: Checkout code
-       uses: actions/checkout@v2
-     - name: Setup Terraform
-       uses: hashicorp/setup-terraform@v1
-       with:
-         terraform_version: 1.3.9
-         terraform_wrapper: false
-     
-     - name: Terraform Format
-       id: fmt
-       run: terraform fmt
-       
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.3.9
+          terraform_wrapper: false
 
-     - name: Terraform Init
-       id: init
-       run: terraform init
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt
 
-     - name: Terraform Plan
-       id: plan
-       run: terraform plan -no-color
+      - name: Terraform Init
+        id: init
+        run: terraform init
 
-     - name: Terraform Apply
-       if: "!contains(github.event.head_commit.message, 'destroy')"
-       run: terraform apply -auto-approve
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color
 
-     - name: Terraform Destroy
-       if: contains(github.event.head_commit.message, 'destroy')
-       run: terraform destroy -auto-approve
+      - name: Terraform Apply
+        if: "!contains(github.event.head_commit.message, 'destroy')"
+        run: terraform apply -auto-approve
+
+      - name: Terraform Destroy
+        if: contains(github.event.head_commit.message, 'destroy')
+        run: terraform destroy -auto-approve
